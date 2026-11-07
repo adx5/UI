@@ -2,48 +2,80 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>零工市场 - 蓝领版原型</title>
+<!-- 移动端全屏与防缩放 -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>XX零工市场 -蓝领版 UI原型</title>
+
+<!-- 微信内视觉优化 (安卓X5内核生效) -->
+<meta name="x5-fullscreen" content="true">
+<meta name="x5-page-mode" content="app">
+
+<!-- iOS PWA 支持 (添加到主屏幕后全屏) -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<!-- 引入 manifest -->
+<link rel="manifest" href="/UI/manifest.json">
+
 <style>
 /* === 全局重置与大字体适配 === */
-*{margin:0;padding:0;box-sizing:border-box}
+*{margin:0;padding:0;box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
 body{
   font-family: 'PingFang SC', -apple-system, sans-serif;
-  background:#222;
+  background:#222; /* 电脑端背景 */
   display:flex;
   justify-content:center;
-  padding:20px 0;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
 }
+
+/* 默认：电脑端手机壳效果 */
 .phone{
-  width:390px;
-  height:844px; /* 固定高度 */
-  background:#F5F7FA;
-  position:relative;
-  overflow:hidden;
+  width: 390px;
+  height: 844px;
+  background: #F5F7FA;
+  position: relative;
+  overflow: hidden;
   font-size: 16px;
+  border-radius: 40px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
 }
+
+/* 针对手机屏幕：直接铺满整个屏幕！ */
+@media (max-width: 500px) {
+  body { background: #F5F7FA; display: block; height: auto; }
+  .phone {
+    width: 100vw;
+    height: 100dvh; /* 动态视口高度，完美避开手机地址栏 */
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
 /* 页面基础隐藏逻辑 */
-.page{ width:100%; height:100%; display:none; position:absolute; top:0; left:0; overflow-y:auto;}
+.page{ width:100%; height:100%; display:none; position:absolute; top:0; left:0; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling: touch;}
 .page.active{ display:block; }
 
 /* 通用组件 */
-.header{ background:#fff; padding:16px; display:flex; align-items:center; border-bottom:1px solid #eee; gap:10px; position:sticky; top:0; z-index:10;}
+.header{ background:#fff; padding:16px; display:flex; align-items:center; border-bottom:1px solid #eee; gap:10px; position:sticky; top:0; z-index:10; padding-top: calc(16px + env(safe-area-inset-top));}
 .header-back{ font-size:24px; color:#333; cursor:pointer; width:32px; font-weight:bold;}
 .header-title{ flex:1; text-align:center; font-size:18px; font-weight:600; margin-right:32px;}
 
-/* 底部导航 */
+/* 底部导航 (完美适配刘海屏底边) */
 .bottom-tab{
-  position:absolute; width:100%; height:64px; background:#fff; display:flex;
+  position:absolute; width:100%; height:auto; background:#fff; display:flex;
   border-top:1px solid #eee; bottom:0; z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom); /* 避开iPhone小白条 */
 }
 .tab{
   flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
   font-size:14px; color:#666; cursor:pointer; line-height: 1.2;
+  padding: 10px 0;
 }
 .tab.active{ color:#FF6B00; font-weight:bold;} 
 
 /* === 首页 === */
-.content{padding:16px; padding-bottom:80px;}
+.content{padding:16px; padding-bottom:100px;}
 .job-card{
   background:#fff; border-radius:16px; padding:20px; margin-bottom:16px;
   box-shadow:0 4px 12px rgba(0,0,0,0.05); cursor:pointer; position:relative;
@@ -72,10 +104,11 @@ body{
 
 /* 底部浮动操作栏 */
 .float-bar{
-  position:absolute; width:100%; height:80px; background:#fff;
+  position:absolute; width:100%; height:auto; background:#fff;
   padding:10px 16px; display:flex; gap:12px; align-items:center;
   border-top:1px solid #eee; bottom:0; z-index:100;
   box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+  padding-bottom: calc(10px + env(safe-area-inset-bottom));
 }
 .btn-chat {
   width: 100px; height: 56px; border: 2px solid #FF6B00; color: #FF6B00;
@@ -89,7 +122,7 @@ body{
 }
 
 /* === 个人中心 === */
-.user-banner { background:#FF6B00; padding:32px 20px; color:#fff;}
+.user-banner { background:#FF6B00; padding:calc(32px + env(safe-area-inset-top)) 20px 32px; color:#fff;}
 .user-row { display:flex; gap:16px; align-items:center;}
 .avatar { width:80px; height:80px; border-radius:50%; background:#fff;}
 .user-info { flex:1;}
@@ -103,7 +136,7 @@ body{
 .arrow{ color:#ccc; font-size:20px;}
 
 /* === 简单简历表 === */
-.form-block { background:#fff; padding:20px; margin:16px; border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,0.05);}
+.form-block { background:#fff; padding:20px; margin:16px; border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,0.05); padding-bottom: 40px;}
 .form-row { margin-bottom:24px;}
 .form-label { font-size:18px; font-weight:bold; margin-bottom:12px; display:block; color:#333;}
 .form-input {
@@ -124,7 +157,7 @@ body{
 .msg-info{ flex:1;}
 .msg-name{ font-size:18px; font-weight:bold; margin-bottom:6px;}
 .msg-preview{ font-size:15px; color:#888; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-.chat-wrap{ padding:20px; padding-bottom:100px; background:#F5F7FA; min-height: 700px;}
+.chat-wrap{ padding:20px; padding-bottom:120px; background:#F5F7FA; min-height: 100%;}
 .chat-bubble{ max-width:75%; padding:16px; border-radius:12px; font-size:16px; line-height:1.6; box-shadow:0 2px 6px rgba(0,0,0,0.05);}
 .chat-row{ margin-bottom:20px; display:flex;}
 .chat-row.left{ justify-content:flex-start;}
@@ -132,13 +165,14 @@ body{
 .chat-row.left .chat-bubble{ background:#fff; border-top-left-radius:0;}
 .chat-row.right .chat-bubble{ background:#FF6B00; color:#fff; border-top-right-radius:0;}
 .chat-input-bar {
-  position:absolute; bottom:64px; width:100%; background:#fff; padding:12px 16px;
+  position:absolute; bottom:0; width:100%; background:#fff; padding:12px 16px;
   display:flex; gap:12px; border-top:1px solid #eee; z-index:100;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
 }
 .chat-input { flex:1; padding:14px; border:1px solid #ddd; border-radius:8px; font-size:16px; outline:none;}
 .chat-send-btn { padding:0 24px; background:#FF6B00; color:#fff; border:none; border-radius:8px; font-size:16px; font-weight:bold; cursor:pointer;}
 
-/* === 启动页专属布局（修复冲突） === */
+/* === 启动页专属布局 === */
 #page-splash { background:#FF6B00; color:#fff; cursor:pointer; }
 #page-splash.active { display:flex; flex-direction:column; align-items:center; justify-content:center; }
 
@@ -155,7 +189,7 @@ body{
 <body>
 <div class="phone">
 
-  <!-- 启动页（完美居中） -->
+  <!-- 启动页 -->
   <div id="page-splash" class="page active" onclick="goTo('page-role')">
     <div style="width: 120px; height: 120px; background: #fff; color: #FF6B00; font-size: 32px; font-weight: bold; border-radius: 24px; display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1.2; margin-bottom: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); animation: scaleIn 0.8s ease-out;">
       零工<br>市场
@@ -166,7 +200,7 @@ body{
 
   <!-- 身份选择 -->
   <div id="page-role" class="page" style="padding:40px 24px; background:#fff;">
-    <div style="font-size:28px; font-weight:bold; text-align:center; margin-bottom:30px;">请选择您的身份</div>
+    <div style="font-size:28px; font-weight:bold; text-align:center; margin-bottom:30px; margin-top: env(safe-area-inset-top);">请选择您的身份</div>
     
     <div class="job-card" style="text-align:center; border:3px solid #FF6B00;" onclick="goTo('page-login')">
       <h3 style="font-size:24px; margin-bottom:10px; color:#FF6B00;">找活干 (求职者)</h3>
@@ -186,7 +220,7 @@ body{
 
   <!-- 登录页 -->
   <div id="page-login" class="page" style="padding:40px 24px;">
-    <div style="font-size:28px; font-weight:bold; margin-bottom:30px;">手机号快捷登录</div>
+    <div style="font-size:28px; font-weight:bold; margin-bottom:30px; margin-top: env(safe-area-inset-top);">手机号快捷登录</div>
     <div style="background:#fff; border-radius:16px; padding:24px; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
       <input type="tel" placeholder="请输入手机号" style="width:100%; padding:16px; font-size:18px; border:1px solid #ddd; border-radius:8px; margin-bottom:16px;">
       <div style="display:flex; gap:10px; margin-bottom:24px;">
@@ -199,7 +233,7 @@ body{
 
   <!-- 首页 -->
   <div id="page-home" class="page">
-    <div style="background:#fff; padding:16px; position:sticky; top:0; z-index:10; box-shadow:0 2px 8px rgba(0,0,0,0.03);">
+    <div style="background:#fff; padding:16px; padding-top: calc(16px + env(safe-area-inset-top)); position:sticky; top:0; z-index:10; box-shadow:0 2px 8px rgba(0,0,0,0.03);">
       <input type="text" placeholder="搜索：普工、叉车、保洁、日结" style="width:100%; padding:14px 20px; font-size:16px; background:#F5F7FA; border:none; border-radius:30px; outline:none;">
     </div>
     <div class="content">
@@ -254,7 +288,7 @@ body{
   </div>
 
   <!-- 岗位详情 -->
-  <div id="page-detail" class="page" style="padding-bottom:80px;">
+  <div id="page-detail" class="page" style="padding-bottom:100px;">
     <div class="header"><div class="header-back" onclick="back()">←</div><div class="header-title">岗位详情</div></div>
     <div class="detail-header">
       <div class="detail-title">汽配厂普工</div>
@@ -317,11 +351,10 @@ body{
       <input class="chat-input" placeholder="输入消息...">
       <button class="chat-send-btn" onclick="showToast('消息已发送')">发送</button>
     </div>
-    <div class="bottom-tab"></div>
   </div>
 
   <!-- 个人中心 -->
-  <div id="page-user" class="page">
+  <div id="page-user" class="page" style="padding-bottom:100px;">
     <div class="user-banner">
       <div class="user-row">
         <div class="avatar"></div>
@@ -401,9 +434,16 @@ body{
 
 </div>
 
-<div id="toast" style="position:fixed; top:40%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,0.8); color:#fff; padding:16px 24px; border-radius:12px; font-size:18px; display:none; z-index:999; font-weight:bold;"></div>
+<div id="toast" style="position:fixed; top:40%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,0.85); color:#fff; padding:16px 24px; border-radius:12px; font-size:18px; display:none; z-index:9999; font-weight:bold;"></div>
 
 <script>
+// 检测是否是微信环境
+const isWeChat = /MicroMessenger/i.test(navigator.userAgent);
+if(isWeChat) {
+  document.body.classList.add('in-wechat');
+  // 在微信里可以加一些特殊处理，这里暂时不做额外UI改变，主要是防抖和全屏感
+}
+
 const stack = [];
 let currentPageId = 'page-splash';
 
