@@ -3,321 +3,405 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>XX零工市场 - UI交互原型</title>
+<title>零工市场 - 蓝领版原型</title>
 <style>
+/* === 全局重置与大字体适配 === */
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:PingFang SC,-apple-system,sans-serif;background:#222;display:flex;justify-content:center;padding:20px 0;}
-.phone{width:390px;min-height:844px;background:#F4F5F7;position:relative;overflow:hidden;}
-.page{width:100%;min-height:844px;display:none;}
-.page.active{display:block;}
+body{
+  font-family: 'PingFang SC', -apple-system, sans-serif;
+  background:#222;
+  display:flex;
+  justify-content:center;
+  padding:20px 0;
+}
+.phone{
+  width:390px;
+  height:844px; /* 固定高度 */
+  background:#F5F7FA;
+  position:relative;
+  overflow:hidden;
+  font-size: 16px;
+}
+/* 页面基础隐藏逻辑 */
+.page{ width:100%; height:100%; display:none; position:absolute; top:0; left:0; overflow-y:auto;}
+.page.active{ display:block; }
 
 /* 通用组件 */
-.header{background:#fff;padding:16px;display:flex;align-items:center;border-bottom:1px solid #eee;gap:10px;}
-.header-back{font-size:20px;color:#333;cursor:pointer;width:28px;}
-.header-title{flex:1;text-align:center;font-size:17px;font-weight:500;margin-right:28px;}
-.bottom-tab{position:fixed;width:390px;height:56px;background:#fff;display:flex;border-top:1px solid #eee;bottom:0;}
-.tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;color:#999;cursor:pointer;}
-.tab.active{color:#0052D9;}
-.content{padding:14px;padding-bottom:70px;}
-.job-card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.04);cursor:pointer;}
-.job-top{display:flex;justify-content:space-between;margin-bottom:6px;}
-.job-name{font-size:17px;font-weight:500;}
-.salary{font-size:17px;color:#0052D9;font-weight:600;}
-.company{font-size:14px;color:#666;margin-bottom:8px;}
-.tags{display:flex;gap:8px;flex-wrap:wrap;}
-.tag{font-size:12px;color:#999;padding:3px 8px;background:#F4F5F7;border-radius:4px;}
-.float-bar{position:fixed;width:390px;height:62px;background:#fff;padding:0 16px;display:flex;gap:12px;align-items:center;border-top:1px solid #eee;bottom:56px;}
-.btn-collect{width:44px;height:44px;border:1px solid #DCDFE6;border-radius:8px;background:#fff;cursor:pointer;}
-.btn-send{flex:1;height:44px;background:#0052D9;color:#fff;border:none;border-radius:8px;font-size:16px;cursor:pointer;}
-.block{background:#fff;border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,0.04);}
-.block-title{font-size:16px;font-weight:500;margin-bottom:12px;}
-.p{font-size:14px;line-height:1.7;color:#444;margin-bottom:8px;}
+.header{ background:#fff; padding:16px; display:flex; align-items:center; border-bottom:1px solid #eee; gap:10px; position:sticky; top:0; z-index:10;}
+.header-back{ font-size:24px; color:#333; cursor:pointer; width:32px; font-weight:bold;}
+.header-title{ flex:1; text-align:center; font-size:18px; font-weight:600; margin-right:32px;}
 
-/* Toast */
-.toast{position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.7);color:#fff;padding:12px 20px;border-radius:8px;font-size:15px;display:none;z-index:999;}
+/* 底部导航 */
+.bottom-tab{
+  position:absolute; width:100%; height:64px; background:#fff; display:flex;
+  border-top:1px solid #eee; bottom:0; z-index: 100;
+}
+.tab{
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  font-size:14px; color:#666; cursor:pointer; line-height: 1.2;
+}
+.tab.active{ color:#FF6B00; font-weight:bold;} 
 
-/* P1：闪屏页 */
-#page-splash{background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-.splash-logo{width:100px;height:100px;border-radius:24px;background:#0052D9;display:flex;align-items:center;justify-content:center;color:#fff;font-size:28px;font-weight:bold;margin-bottom:24px;text-align:center;line-height:1.2;}
-.splash-slogan{font-size:16px;color:#666;}
-.splash-tip{position:absolute;bottom:40px;font-size:12px;color:#999;}
+/* === 首页 === */
+.content{padding:16px; padding-bottom:80px;}
+.job-card{
+  background:#fff; border-radius:16px; padding:20px; margin-bottom:16px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.05); cursor:pointer; position:relative;
+}
+.trust-tag {
+  position:absolute; top:-10px; right:20px;
+  background:#E6F7FF; color:#0052D9; font-size:12px; font-weight:bold;
+  padding:4px 10px; border-radius:20px; border:1px solid #BAE0FF;
+}
+.job-top{ display:flex; justify-content:space-between; margin-bottom:10px; align-items:center;}
+.job-name{ font-size:20px; font-weight:bold; color:#111;}
+.salary{ font-size:18px; color:#FF4D4F; font-weight:bold;}
+.company{ font-size:16px; color:#333; margin-bottom:12px; font-weight:500;}
+.tags{ display:flex; gap:10px; flex-wrap:wrap;}
+.tag{ font-size:14px; color:#555; padding:6px 12px; background:#F0F2F5; border-radius:6px;}
+.tag.highlight{ background:#FFF1E6; color:#FF6B00; font-weight:bold;}
 
-/* P2：身份选择 */
-#page-role{padding:48px 24px;background:#F4F5F7;}
-.role-title{font-size:24px;font-weight:600;text-align:center;margin-bottom:8px;}
-.role-sub{font-size:14px;color:#666;text-align:center;margin-bottom:48px;}
-.role-item{background:#fff;border-radius:12px;padding:32px 24px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,0.04);text-align:center;cursor:pointer;border:2px solid transparent;}
-.role-item:hover{border-color:#0052D9;}
-.role-item h3{font-size:20px;margin-bottom:8px;color:#333;}
-.role-item p{font-size:14px;color:#666;}
+/* === 详情页 === */
+.detail-header { background:#fff; padding:20px; border-bottom:1px solid #eee; }
+.detail-title { font-size:24px; font-weight:bold; margin-bottom:10px;}
+.detail-salary { font-size:22px; color:#FF4D4F; font-weight:bold; margin-bottom:12px;}
+.detail-info { font-size:16px; color:#666; margin-bottom:8px; line-height:1.6;}
+.detail-block { background:#fff; border-radius:12px; padding:20px; margin:16px; box-shadow:0 2px 8px rgba(0,0,0,0.03);}
+.detail-block-title { font-size:18px; font-weight:bold; margin-bottom:12px; color:#111; border-left:4px solid #FF6B00; padding-left:10px;}
+.detail-p { font-size:16px; color:#444; line-height:1.8; margin-bottom:8px;}
 
-/* P3：登录页 (已修复溢出) */
-#page-login{background:#F4F5F7;padding:40px 24px;}
-.login-title{font-size:24px;font-weight:600;margin-bottom:32px;}
-.login-card{background:#fff;border-radius:12px;padding:24px 16px;box-shadow:0 2px 8px rgba(0,0,0,0.04);}
-.login-input-wrap{display:flex;gap:10px;align-items:center;margin-bottom:16px;width:100%;}
-.login-input{flex:1;width:100%;min-width:0;padding:14px 12px;border:1px solid #E5E6EB;border-radius:8px;font-size:15px;outline:none;box-sizing:border-box;}
-.login-code-btn{flex-shrink:0;white-space:nowrap;padding:14px 12px;background:#0052D9;color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer;}
-.login-agree{display:flex;gap:8px;align-items:center;margin:16px 0 24px;font-size:13px;color:#666;}
-.login-agree a{color:#0052D9;text-decoration:none;}
-.login-submit{width:100%;padding:14px;background:#0052D9;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:500;cursor:pointer;box-sizing:border-box;}
-.login-divider{display:flex;align-items:center;margin:32px 0;color:#999;font-size:13px;}
-.login-divider::before,.login-divider::after{content:"";flex:1;height:1px;background:#E5E6EB;}
-.login-divider span{padding:0 12px;}
-.login-third{display:flex;justify-content:center;gap:32px;}
-.login-third-icon{width:44px;height:44px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;color:#666;border:1px solid #eee;cursor:pointer;}
+/* 底部浮动操作栏 */
+.float-bar{
+  position:absolute; width:100%; height:80px; background:#fff;
+  padding:10px 16px; display:flex; gap:12px; align-items:center;
+  border-top:1px solid #eee; bottom:0; z-index:100;
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+}
+.btn-chat {
+  width: 100px; height: 56px; border: 2px solid #FF6B00; color: #FF6B00;
+  background: #fff; border-radius: 12px; font-size: 16px; font-weight: bold;
+  cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2;
+}
+.btn-call {
+  flex:1; height:56px; background:#FF6B00; color:#fff; border:none;
+  border-radius:12px; font-size:20px; font-weight:bold; cursor:pointer;
+  display: flex; align-items: center; justify-content: center; gap:8px;
+}
 
-/* P13：企业评价 */
-#page-review .review-header{background:#fff;padding:16px;}
-#page-review .score-row{display:flex;gap:20px;align-items:center;margin-bottom:14px;}
-#page-review .big-score{font-size:36px;font-weight:600;color:#0052D9;}
-#page-review .stars{color:#FF9500;font-size:20px;}
-#page-review .tabs{display:flex;gap:16px;border-bottom:1px solid #eee;padding-bottom:10px;}
-#page-review .tab-item{font-size:15px;color:#666;cursor:pointer;}
-#page-review .tab-item.active{color:#0052D9;font-weight:500;}
-#page-review .review-card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.04);}
-#page-review .rev-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-#page-review .rev-user{font-size:15px;font-weight:500;}
-#page-review .rev-tag{font-size:13px;color:#999;width:120px;text-align:right;}
-#page-review .rev-text{font-size:14px;color:#666;line-height:1.6;margin:10px 0;}
-#page-review .rev-meta{font-size:12px;color:#999;}
-
-/* 消息列表 */
-.msg-item{background:#fff;padding:16px;border-bottom:1px solid #F4F5F7;display:flex;align-items:center;gap:12px;cursor:pointer;}
-.msg-avatar{width:48px;height:48px;border-radius:50%;background:#E8F0FF;}
-.msg-info{flex:1;}
-.msg-name{font-size:15px;font-weight:500;margin-bottom:4px;}
-.msg-preview{font-size:13px;color:#999;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-
-/* 聊天页 */
-.chat-wrap{padding:16px;padding-bottom:80px;}
-.chat-row{margin-bottom:16px;display:flex;}
-.chat-row.right{justify-content:flex-end;}
-.chat-bubble{max-width:70%;padding:10px 14px;border-radius:8px;font-size:14px;line-height:1.6;}
-.chat-row.left .chat-bubble{background:#fff;}
-.chat-row.right .chat-bubble{background:#0052D9;color:#fff;}
-.chat-input-bar{position:fixed;bottom:56px;width:390px;background:#fff;padding:10px 16px;display:flex;gap:10px;border-top:1px solid #eee;}
-.chat-input{flex:1;padding:10px 14px;border:1px solid #ddd;border-radius:999px;outline:none;}
-.chat-send-btn{padding:0 16px;background:#0052D9;color:#fff;border:none;border-radius:999px;cursor:pointer;}
-
-/* 个人中心 */
-.user-banner{background:linear-gradient(135deg,#0052D9,#3684E8);padding:32px 20px;color:#fff;}
-.user-row{display:flex;gap:14px;align-items:center;}
-.avatar{width:72px;height:72px;border-radius:50%;background:#fff;opacity:0.9;}
-.user-info{flex:1;}
-.username{font-size:20px;font-weight:600;margin-bottom:6px;}
-.user-desc{font-size:14px;opacity:0.9;}
-.stat-card{background:#fff;border-radius:12px;padding:16px;margin:-12px 16px 16px;box-shadow:0 2px 8px rgba(0,0,0,0.04);display:flex;justify-content:space-around;text-align:center;}
-.stat-num{font-size:18px;font-weight:600;color:#0052D9;}
-.stat-label{font-size:13px;color:#666;margin-top:4px;}
-.menu-card{background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.04);overflow:hidden;}
-.menu-item{display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid #F4F5F7;cursor:pointer;}
+/* === 个人中心 === */
+.user-banner { background:#FF6B00; padding:32px 20px; color:#fff;}
+.user-row { display:flex; gap:16px; align-items:center;}
+.avatar { width:80px; height:80px; border-radius:50%; background:#fff;}
+.user-info { flex:1;}
+.username { font-size:24px; font-weight:bold; margin-bottom:8px;}
+.user-desc { font-size:16px; opacity:0.9;}
+.menu-card { background:#fff; border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,0.05); overflow:hidden; margin:16px;}
+.menu-item { display:flex; justify-content:space-between; align-items:center; padding:20px; border-bottom:1px solid #f0f0f0; cursor:pointer;}
 .menu-item:last-child{border-bottom:none;}
-.menu-text{font-size:15px;}
-.arrow{color:#999;}
+.menu-text { font-size:18px; font-weight:500; color:#333; display:flex; align-items:center; gap:10px;}
+.menu-icon { font-size:24px; }
+.arrow{ color:#ccc; font-size:20px;}
 
-/* 简历预览 */
-.name-line{font-size:20px;font-weight:600;margin-bottom:6px;}
-.basic-line{font-size:14px;color:#666;margin-bottom:16px;}
-.section-title{font-size:16px;font-weight:500;margin:18px 0 10px;padding-bottom:6px;border-bottom:1px solid #eee;}
-.item-title{font-size:15px;font-weight:500;margin-bottom:4px;}
-.item-sub{font-size:13px;color:#999;margin-bottom:6px;}
+/* === 简单简历表 === */
+.form-block { background:#fff; padding:20px; margin:16px; border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,0.05);}
+.form-row { margin-bottom:24px;}
+.form-label { font-size:18px; font-weight:bold; margin-bottom:12px; display:block; color:#333;}
+.form-input {
+  width:100%; padding:16px; font-size:18px; border:2px solid #E5E6EB;
+  border-radius:12px; outline:none;
+}
+.form-input:focus { border-color:#FF6B00; }
+.option-group { display:flex; gap:12px; flex-wrap:wrap;}
+.option-btn {
+  padding:12px 24px; font-size:16px; border:2px solid #E5E6EB;
+  border-radius:12px; background:#fff; cursor:pointer; color:#333;
+}
+.option-btn.active { border-color:#FF6B00; background:#FFF1E6; color:#FF6B00; font-weight:bold;}
+
+/* === 消息与聊天 === */
+.msg-item{ background:#fff; padding:20px; border-bottom:1px solid #f0f0f0; display:flex; align-items:center; gap:16px; cursor:pointer;}
+.msg-avatar{ width:56px; height:56px; border-radius:50%; background:#E8F0FF;}
+.msg-info{ flex:1;}
+.msg-name{ font-size:18px; font-weight:bold; margin-bottom:6px;}
+.msg-preview{ font-size:15px; color:#888; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.chat-wrap{ padding:20px; padding-bottom:100px; background:#F5F7FA; min-height: 700px;}
+.chat-bubble{ max-width:75%; padding:16px; border-radius:12px; font-size:16px; line-height:1.6; box-shadow:0 2px 6px rgba(0,0,0,0.05);}
+.chat-row{ margin-bottom:20px; display:flex;}
+.chat-row.left{ justify-content:flex-start;}
+.chat-row.right{ justify-content:flex-end;}
+.chat-row.left .chat-bubble{ background:#fff; border-top-left-radius:0;}
+.chat-row.right .chat-bubble{ background:#FF6B00; color:#fff; border-top-right-radius:0;}
+.chat-input-bar {
+  position:absolute; bottom:64px; width:100%; background:#fff; padding:12px 16px;
+  display:flex; gap:12px; border-top:1px solid #eee; z-index:100;
+}
+.chat-input { flex:1; padding:14px; border:1px solid #ddd; border-radius:8px; font-size:16px; outline:none;}
+.chat-send-btn { padding:0 24px; background:#FF6B00; color:#fff; border:none; border-radius:8px; font-size:16px; font-weight:bold; cursor:pointer;}
+
+/* === 启动页专属布局（修复冲突） === */
+#page-splash { background:#FF6B00; color:#fff; cursor:pointer; }
+#page-splash.active { display:flex; flex-direction:column; align-items:center; justify-content:center; }
+
+@keyframes scaleIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
 </style>
 </head>
 <body>
 <div class="phone">
-  <div id="toast" class="toast"></div>
 
-  <!-- P1：闪屏页 -->
-  <div id="page-splash" class="page active">
-    <div class="splash-logo">零工<br>市场</div>
-    <div class="splash-slogan">找好工作，从这里开始</div>
-    <div class="splash-tip">加载中...</div>
+  <!-- 启动页（完美居中） -->
+  <div id="page-splash" class="page active" onclick="goTo('page-role')">
+    <div style="width: 120px; height: 120px; background: #fff; color: #FF6B00; font-size: 32px; font-weight: bold; border-radius: 24px; display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1.2; margin-bottom: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); animation: scaleIn 0.8s ease-out;">
+      零工<br>市场
+    </div>
+    <div style="font-size: 22px; font-weight: bold; letter-spacing: 2px; margin-bottom: 8px; animation: fadeIn 1s ease;">找活快，结钱准</div>
+    <div style="font-size: 14px; opacity: 0.8; animation: fadeIn 1.2s ease;">点击屏幕进入</div>
   </div>
 
-  <!-- P2：身份选择 -->
-  <div id="page-role" class="page">
-    <div class="role-title">请选择你的身份</div>
-    <div class="role-sub">选择后为你匹配对应服务</div>
-    <div class="role-item" style="border: 2px solid #0052D9;" onclick="goTo('page-login')">
-      <h3>我是求职者</h3>
-      <p>投递简历，寻找心仪岗位</p>
+  <!-- 身份选择 -->
+  <div id="page-role" class="page" style="padding:40px 24px; background:#fff;">
+    <div style="font-size:28px; font-weight:bold; text-align:center; margin-bottom:30px;">请选择您的身份</div>
+    
+    <div class="job-card" style="text-align:center; border:3px solid #FF6B00;" onclick="goTo('page-login')">
+      <h3 style="font-size:24px; margin-bottom:10px; color:#FF6B00;">找活干 (求职者)</h3>
+      <p style="font-size:16px; color:#666;">日结、包吃住、离家近</p>
     </div>
-    <div class="role-item" onclick="goTo('page-login')">
-      <h3>我是招聘者</h3>
-      <p>发布职位，寻找合适人才</p>
+    
+    <div class="job-card" style="text-align:center;" onclick="goTo('page-login')">
+      <h3 style="font-size:24px; margin-bottom:10px;">急招人 (老板)</h3>
+      <p style="font-size:16px; color:#666;">发岗位、找普工、极速招</p>
     </div>
-    <div class="role-item" onclick="goTo('page-login')">
-      <h3>我是服务商</h3>
-      <p>发布技能，同城服务接单</p>
+
+    <div class="job-card" style="text-align:center;" onclick="goTo('page-login')">
+      <h3 style="font-size:24px; margin-bottom:10px;">接单赚钱 (服务商)</h3>
+      <p style="font-size:16px; color:#666;">发布技能、做保洁、同城接单</p>
     </div>
   </div>
 
-  <!-- P3：登录页 -->
-  <div id="page-login" class="page">
-    <div class="login-title">手机号登录</div>
-    <div class="login-card">
-      <div class="login-input-wrap">
-        <input class="login-input" type="tel" placeholder="请输入手机号">
+  <!-- 登录页 -->
+  <div id="page-login" class="page" style="padding:40px 24px;">
+    <div style="font-size:28px; font-weight:bold; margin-bottom:30px;">手机号快捷登录</div>
+    <div style="background:#fff; border-radius:16px; padding:24px; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+      <input type="tel" placeholder="请输入手机号" style="width:100%; padding:16px; font-size:18px; border:1px solid #ddd; border-radius:8px; margin-bottom:16px;">
+      <div style="display:flex; gap:10px; margin-bottom:24px;">
+        <input type="text" placeholder="验证码" style="flex:1; padding:16px; font-size:18px; border:1px solid #ddd; border-radius:8px; min-width:0;">
+        <button style="flex-shrink:0; padding:0 16px; background:#FFF1E6; color:#FF6B00; font-weight:bold; border:1px solid #FF6B00; border-radius:8px; font-size:16px;">获取验证码</button>
       </div>
-      <div class="login-input-wrap">
-        <input class="login-input" type="text" placeholder="请输入验证码">
-        <button class="login-code-btn">获取验证码</button>
-      </div>
-      <div class="login-agree">
-        <input type="checkbox" checked>
-        <span>我已阅读并同意 <a href="#">用户协议</a> 和 <a href="#">隐私政策</a></span>
-      </div>
-      <button class="login-submit" onclick="switchTab('page-home')">登录 / 注册</button>
-    </div>
-    <div class="login-divider"><span>其他登录方式</span></div>
-    <div class="login-third">
-      <div class="login-third-icon">微</div>
-      <div class="login-third-icon">Q</div>
+      <button onclick="switchTab('page-home')" style="width:100%; padding:18px; background:#FF6B00; color:#fff; font-size:20px; font-weight:bold; border:none; border-radius:12px;">登录 / 注册</button>
     </div>
   </div>
 
   <!-- 首页 -->
   <div id="page-home" class="page">
-    <div class="search-bar" style="background:#fff;padding:12px 16px;display:flex;gap:10px;align-items:center">
-      <input class="search-input" style="flex:1;padding:9px 14px;background:#F4F5F7;border:none;border-radius:999px;font-size:14px;outline:none" placeholder="搜索职位、公司">
-    </div>
-    <div class="filter-wrap" style="display:flex;background:#fff;padding:0 10px;border-top:1px solid #eee">
-      <div class="filter-item active" style="flex:1;text-align:center;padding:12px;font-size:14px;color:#0052D9;position:relative">全部</div>
-      <div class="filter-item" style="flex:1;text-align:center;padding:12px;font-size:14px;color:#666;position:relative">最新</div>
-      <div class="filter-item" style="flex:1;text-align:center;padding:12px;font-size:14px;color:#666;position:relative">高薪</div>
-      <div class="filter-item" style="flex:1;text-align:center;padding:12px;font-size:14px;color:#666;position:relative">距离</div>
+    <div style="background:#fff; padding:16px; position:sticky; top:0; z-index:10; box-shadow:0 2px 8px rgba(0,0,0,0.03);">
+      <input type="text" placeholder="搜索：普工、叉车、保洁、日结" style="width:100%; padding:14px 20px; font-size:16px; background:#F5F7FA; border:none; border-radius:30px; outline:none;">
     </div>
     <div class="content">
       <div class="job-card" onclick="goTo('page-detail')">
-        <div class="job-top"><div class="job-name">前端开发工程师</div><div class="salary">15k-25k</div></div>
-        <div class="company">零工科技有限公司</div>
-        <div class="tags"><span class="tag">3年</span><span class="tag">本科</span><span class="tag">郑州</span></div>
+        <div class="trust-tag">🛡️ 政府监管 · 真实直招</div>
+        <div class="job-top">
+          <div class="job-name">汽配厂普工</div>
+          <div class="salary">200元/天</div>
+        </div>
+        <div class="company">东风汽配一厂（直招）</div>
+        <div class="tags">
+          <span class="tag highlight">日结</span>
+          <span class="tag">包吃包住</span>
+          <span class="tag">18-55岁</span>
+          <span class="tag">无需经验</span>
+        </div>
       </div>
       <div class="job-card" onclick="goTo('page-detail')">
-        <div class="job-top"><div class="job-name">产品经理</div><div class="salary">12k-20k</div></div>
-        <div class="company">普耀信息技术集团</div>
-        <div class="tags"><span class="tag">2年</span><span class="tag">本科</span><span class="tag">郑州</span></div>
+        <div class="trust-tag">🛡️ 平台担保 · 不拖欠</div>
+        <div class="job-top">
+          <div class="job-name">大型超市理货员</div>
+          <div class="salary">180元/天</div>
+        </div>
+        <div class="company">永辉超市（高新区店）</div>
+        <div class="tags">
+          <span class="tag highlight">周结</span>
+          <span class="tag">离家2km</span>
+          <span class="tag">可上夜班</span>
+          <span class="tag">45-60岁</span>
+        </div>
+      </div>
+      <div class="job-card" onclick="goTo('page-detail')">
+        <div class="trust-tag">🛡️ 极速结算</div>
+        <div class="job-top">
+          <div class="job-name">仓库叉车工</div>
+          <div class="salary">260元/天</div>
+        </div>
+        <div class="company">顺丰快运中转场</div>
+        <div class="tags">
+          <span class="tag highlight">日结</span>
+          <span class="tag">需叉车证</span>
+          <span class="tag">包住</span>
+          <span class="tag">男士优先</span>
+        </div>
       </div>
     </div>
     <div class="bottom-tab">
-      <div class="tab active" onclick="switchTab('page-home')">首页</div>
-      <div class="tab" onclick="switchTab('page-msg-list')">消息</div>
-      <div class="tab" onclick="switchTab('page-delivery')">投递</div>
-      <div class="tab" onclick="switchTab('page-user')">我的</div>
+      <div class="tab active" onclick="switchTab('page-home')">🏠<br>找活</div>
+      <div class="tab" onclick="switchTab('page-msg-list')">💬<br>消息</div>
+      <div class="tab" onclick="switchTab('page-user')">👤<br>我的</div>
     </div>
   </div>
 
   <!-- 岗位详情 -->
-  <div id="page-detail" class="page">
+  <div id="page-detail" class="page" style="padding-bottom:80px;">
     <div class="header"><div class="header-back" onclick="back()">←</div><div class="header-title">岗位详情</div></div>
-    <div style="background:#fff;padding:16px;border-bottom:1px solid #eee">
-      <div style="font-size:20px;font-weight:600;margin-bottom:8px">前端开发工程师</div>
-      <div style="font-size:18px;color:#0052D9;font-weight:600;margin-bottom:10px">15k - 25k</div>
-      <div style="font-size:14px;color:#666;margin-bottom:6px">郑州 · 3-5年 · 本科</div>
-      <div style="font-size:14px;color:#666">零工科技有限公司</div>
+    <div class="detail-header">
+      <div class="detail-title">汽配厂普工</div>
+      <div class="detail-salary">200元/天 <span style="font-size:16px; color:#666; font-weight:normal;">(日结)</span></div>
+      <div class="detail-info">📍 郑州市高新区产业园</div>
+      <div class="detail-info">👤 18-55岁，男女不限</div>
+      <div class="detail-info">🏢 东风汽配一厂（企业直招）</div>
     </div>
-    <div class="content">
-      <div class="block"><div class="block-title">岗位职责</div><div class="p">1、负责 PC、移动端前端业务开发；</div><div class="p">2、基于 Vue3 + TS 进行业务迭代；</div><div class="p">3、参与组件库搭建、性能优化；</div></div>
-      <div class="block"><div class="block-title">任职要求</div><div class="p">1、本科及以上，3 年以上前端经验；</div><div class="p">2、熟练 Vue / TS / Webpack；</div></div>
+    <div class="detail-block">
+      <div class="detail-block-title">岗位要求</div>
+      <div class="detail-p">1. 身体健康，能吃苦耐劳。</div>
+      <div class="detail-p">2. 无学历要求，无需工作经验，有人带。</div>
+      <div class="detail-p">3. 能适应两班倒，夜班有额外补贴。</div>
     </div>
-    <div class="float-bar"><button class="btn-collect">收藏</button><button class="btn-send" onclick="deliverAndGotoChat()">立即投递</button></div>
-    <div class="bottom-tab"></div>
+    <div class="detail-block">
+      <div class="detail-block-title">福利待遇</div>
+      <div class="detail-p">✅ 包吃包住（宿舍有空调热水）。</div>
+      <div class="detail-p">✅ 工资日结，下班就发钱，绝不拖欠。</div>
+      <div class="detail-p">✅ 入职即买意外险，安全有保障。</div>
+    </div>
+    <div class="float-bar">
+      <button class="btn-chat" onclick="goTo('page-chat')">💬<br>在线聊</button>
+      <button class="btn-call" onclick="showToast('正在拨打：400-888-8888')">📞 立即打电话</button>
+    </div>
   </div>
 
   <!-- 消息列表 -->
   <div id="page-msg-list" class="page">
     <div class="header"><div class="header-title">消息</div></div>
-    <div class="msg-item" onclick="goTo('page-chat')"><div class="msg-avatar"></div><div class="msg-info"><div class="msg-name">零工科技 HR</div><div class="msg-preview">你好，简历已查看，方便约面试吗？</div></div></div>
-    <div class="msg-item" onclick="goTo('page-chat')"><div class="msg-avatar"></div><div class="msg-info"><div class="msg-name">普耀招聘</div><div class="msg-preview">你的岗位已经进入面试环节</div></div></div>
+    <div class="msg-item" onclick="goTo('page-chat')">
+      <div class="msg-avatar"></div>
+      <div class="msg-info">
+        <div class="msg-name">东风汽配厂 王厂长</div>
+        <div class="msg-preview">明天能来上班吗？给你留个名额。</div>
+      </div>
+    </div>
+    <div class="msg-item" onclick="goTo('page-chat')">
+      <div class="msg-avatar"></div>
+      <div class="msg-info">
+        <div class="msg-name">永辉超市 招聘部</div>
+        <div class="msg-preview">您好，理货员的岗位还在招人，包午餐。</div>
+      </div>
+    </div>
     <div class="bottom-tab">
-      <div class="tab" onclick="switchTab('page-home')">首页</div>
-      <div class="tab active" onclick="switchTab('page-msg-list')">消息</div>
-      <div class="tab" onclick="switchTab('page-delivery')">投递</div>
-      <div class="tab" onclick="switchTab('page-user')">我的</div>
+      <div class="tab" onclick="switchTab('page-home')">🏠<br>找活</div>
+      <div class="tab active" onclick="switchTab('page-msg-list')">💬<br>消息</div>
+      <div class="tab" onclick="switchTab('page-user')">👤<br>我的</div>
     </div>
   </div>
 
   <!-- 聊天详情 -->
   <div id="page-chat" class="page">
-    <div class="header"><div class="header-back" onclick="back()">←</div><div class="header-title">零工科技 HR</div></div>
+    <div class="header"><div class="header-back" onclick="back()">←</div><div class="header-title">东风汽配厂 王厂长</div></div>
     <div class="chat-wrap">
-      <div class="chat-row left"><div class="chat-bubble">您好，看到您投递了前端岗位，请问什么时候方便面试？</div></div>
-      <div class="chat-row right"><div class="chat-bubble">你好，本周三下午都可以</div></div>
+      <div class="chat-row left"><div class="chat-bubble">你好，请问是看到我们招普工吗？</div></div>
+      <div class="chat-row right"><div class="chat-bubble">是的，请问还包吃住吗？</div></div>
+      <div class="chat-row left"><div class="chat-bubble">包的，宿舍有空调。你多大年纪？</div></div>
     </div>
-    <div class="chat-input-bar"><input class="chat-input" placeholder="输入消息..."><button class="chat-send-btn">发送</button></div>
+    <div class="chat-input-bar">
+      <input class="chat-input" placeholder="输入消息...">
+      <button class="chat-send-btn" onclick="showToast('消息已发送')">发送</button>
+    </div>
     <div class="bottom-tab"></div>
-  </div>
-
-  <!-- 投递记录页 -->
-  <div id="page-delivery" class="page">
-    <div class="header"><div class="header-title">投递记录</div></div>
-    <div class="content">
-      <div class="job-card"><div class="job-top"><div class="job-name">前端开发工程师</div><div style="font-size:13px;color:#0052D9">已发 Offer</div></div><div class="company">零工科技有限公司</div><div class="tags"><span class="tag">3年</span><span class="tag">本科</span></div></div>
-      <div class="job-card"><div class="job-top"><div class="job-name">视频剪辑</div><div style="font-size:13px;color:#0052D9">面试邀请</div></div><div class="company">普耀信息技术集团</div><div class="tags"><span class="tag">2年</span><span class="tag">本科</span></div></div>
-    </div>
-    <div class="bottom-tab">
-      <div class="tab" onclick="switchTab('page-home')">首页</div>
-      <div class="tab" onclick="switchTab('page-msg-list')">消息</div>
-      <div class="tab active" onclick="switchTab('page-delivery')">投递</div>
-      <div class="tab" onclick="switchTab('page-user')">我的</div>
-    </div>
   </div>
 
   <!-- 个人中心 -->
   <div id="page-user" class="page">
-    <div class="user-banner"><div class="user-row"><div class="avatar"></div><div class="user-info"><div class="username">张三</div><div class="user-desc">前端开发 · 3年经验</div></div></div></div>
-    <div class="stat-card"><div><div class="stat-num">28</div><div class="stat-label">投递</div></div><div><div class="stat-num">6</div><div class="stat-label">面试</div></div><div><div class="stat-num">2</div><div class="stat-label">offer</div></div></div>
-    <div style="padding:0 16px 16px">
-      <div class="menu-card">
-        <div class="menu-item" onclick="goTo('page-resume')"><div class="menu-text">在线简历</div><div class="arrow">></div></div>
-        <div class="menu-item" onclick="goTo('page-review')"><div class="menu-text">企业评价</div><div class="arrow">></div></div>
-        <div class="menu-item"><div class="menu-text">收藏职位</div><div class="arrow">></div></div>
+    <div class="user-banner">
+      <div class="user-row">
+        <div class="avatar"></div>
+        <div class="user-info">
+          <div class="username">李建国</div>
+          <div class="user-desc">男 · 45岁 · 普工/叉车</div>
+        </div>
       </div>
     </div>
+    
+    <div class="menu-card" style="margin-top:-20px; position:relative;">
+      <div class="menu-item" onclick="goTo('page-resume')">
+        <div class="menu-text"><span class="menu-icon">📝</span> 我的简历（去完善）</div>
+        <div class="arrow">></div>
+      </div>
+    </div>
+
+    <div style="padding:0 16px; font-size:16px; font-weight:bold; color:#666; margin-bottom:10px;">我的打工记录</div>
+    <div class="menu-card" style="margin-top:0;">
+      <div class="menu-item">
+        <div class="menu-text"><span class="menu-icon">💰</span> 我的工资流水</div>
+        <div class="arrow">></div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-text"><span class="menu-icon">📅</span> 我的考勤打卡</div>
+        <div class="arrow">></div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-text"><span class="menu-icon">📄</span> 我的电子合同</div>
+        <div class="arrow">></div>
+      </div>
+    </div>
+    
     <div class="bottom-tab">
-      <div class="tab" onclick="switchTab('page-home')">首页</div>
-      <div class="tab" onclick="switchTab('page-msg-list')">消息</div>
-      <div class="tab" onclick="switchTab('page-delivery')">投递</div>
-      <div class="tab active" onclick="switchTab('page-user')">我的</div>
+      <div class="tab" onclick="switchTab('page-home')">🏠<br>找活</div>
+      <div class="tab" onclick="switchTab('page-msg-list')">💬<br>消息</div>
+      <div class="tab active" onclick="switchTab('page-user')">👤<br>我的</div>
     </div>
   </div>
 
-  <!-- 简历预览 -->
+  <!-- 极简简历 -->
   <div id="page-resume" class="page">
-    <div class="header"><div class="header-back" onclick="back()">←</div><div class="header-title">我的简历</div></div>
-    <div class="content">
-      <div class="block">
-        <div class="name-line">张三</div><div class="basic-line">26岁 | 本科 | 前端开发工程师</div>
-        <div class="section-title">求职意向</div><div class="p">前端开发工程师 | 期望薪资：15k-25k | 郑州</div>
-        <div class="section-title">工作经历</div><div class="item-title">零工科技有限公司 前端开发工程师</div><div class="item-sub">2023.04 - 至今</div><div class="p">负责移动端、PC端业务开发，使用 Vue3 + TS，参与组件库建设。</div>
+    <div class="header"><div class="header-back" onclick="back()">←</div><div class="header-title">简单填表，马上找活</div></div>
+    
+    <div class="form-block">
+      <div class="form-row">
+        <label class="form-label">1. 您的姓名</label>
+        <input type="text" class="form-input" value="李建国">
       </div>
-    </div>
-    <div class="bottom-tab"></div>
-  </div>
+      <div class="form-row">
+        <label class="form-label">2. 您的年龄</label>
+        <input type="text" class="form-input" value="45">
+      </div>
+      
+      <div class="form-row">
+        <label class="form-label">3. 您有电工证/叉车证吗？</label>
+        <div class="option-group">
+          <button class="option-btn">没有</button>
+          <button class="option-btn active">有叉车证</button>
+          <button class="option-btn">有电工证</button>
+        </div>
+      </div>
 
-  <!-- P13：企业评价页 -->
-  <div id="page-review" class="page">
-    <div class="header"><div class="header-back" onclick="back()">←</div><div class="header-title">企业评价</div></div>
-    <div class="review-header">
-      <div class="score-row"><div class="big-score">4.2</div><div class="stars">★★★★☆</div></div>
-      <div class="tabs"><div class="tab-item active">员工评价</div><div class="tab-item">面试经验</div></div>
-    </div>
-    <div class="content" style="padding-top:14px;">
-      <div class="review-card">
-        <div class="rev-head"><div class="rev-user">匿名用户</div><div class="rev-tag">在职 · 前端</div></div>
-        <div class="rev-text">团队氛围不错，技术栈新，加班可控，福利齐全。</div>
-        <div class="rev-meta">2026-10-12</div>
+      <div class="form-row">
+        <label class="form-label">4. 能不能上夜班？</label>
+        <div class="option-group">
+          <button class="option-btn active">能上夜班</button>
+          <button class="option-btn">只能上白班</button>
+        </div>
       </div>
-      <div class="review-card">
-        <div class="rev-head"><div class="rev-user">匿名用户</div><div class="rev-tag">已离职 · 产品</div></div>
-        <div class="rev-text">晋升通道清晰，适合想长期沉淀的同学。</div>
-        <div class="rev-meta">2026-09-28</div>
-      </div>
+
+      <button onclick="showToast('保存成功！'); setTimeout(()=>{back()}, 1000);" style="width:100%; padding:20px; background:#FF6B00; color:#fff; font-size:20px; font-weight:bold; border:none; border-radius:12px; margin-top:20px; cursor:pointer;">
+        保存并找活
+      </button>
     </div>
   </div>
 
 </div>
+
+<div id="toast" style="position:fixed; top:40%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,0.8); color:#fff; padding:16px 24px; border-radius:12px; font-size:18px; display:none; z-index:999; font-weight:bold;"></div>
 
 <script>
 const stack = [];
@@ -349,21 +433,22 @@ function showToast(text){
   const t = document.getElementById('toast');
   t.innerText = text;
   t.style.display = 'block';
-  setTimeout(()=> t.style.display = 'none',1200);
+  setTimeout(()=> t.style.display = 'none',1500);
 }
 
-function deliverAndGotoChat(){
-  showToast('投递成功！');
-  setTimeout(()=>{
-    goTo('page-chat');
-  },1300);
-}
+document.querySelectorAll('.option-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    this.parentNode.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
 
+// 3秒后自动进入身份选择（如果没有点击的话）
 setTimeout(() => {
   if(currentPageId === 'page-splash') {
     setPage('page-role');
   }
-}, 1500);
+}, 3000);
 </script>
 </body>
 </html>
